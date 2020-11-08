@@ -16,3 +16,21 @@ if (CardboardBox.isReady()) {
     this.getLogger().info(item2.toString());
 }
 ```
+
+Using
+-----
+
+```xml
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+```
+
+```xml
+<dependency>
+    <groupId>org.kitteh</groupId>
+    <artifactId>cardboardbox</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
