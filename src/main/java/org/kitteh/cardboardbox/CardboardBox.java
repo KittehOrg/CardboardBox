@@ -62,10 +62,22 @@ public class CardboardBox {
     private static boolean hasDataVersion = false;
 
     private static boolean failure = true;
+    private static boolean modernPaper = false;
     private static Exception exception;
     private static boolean testPending = true;
 
     static {
+        init();
+    }
+
+    private static void init() {
+        try {
+            ItemStack.class.getDeclaredMethod("deserializeBytes", byte[].class);
+            ItemStack.class.getDeclaredMethod("serializeAsBytes");
+            modernPaper = true;
+            return;
+        } catch (Exception ignored) {
+        }
         try {
             String[] packageSplit = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
             String packageVersion = packageSplit[packageSplit.length - 1] + '.';
@@ -150,18 +162,28 @@ public class CardboardBox {
     }
 
     /**
+     * Gets if Cardboard Box will just use Paper's built-in functionality.
+     *
+     * @return true if the built-in methods exist, eliminating stress
+     */
+    public static boolean isModernPaperSupport() {
+        return modernPaper;
+    }
+
+    /**
      * Gets if Cardboard Box is ready to work, or failed to initialize.
      *
      * @return true if ready
      */
     public static boolean isReady() {
+        if (modernPaper) {
+            return true;
+        }
         if (!failure && testPending) {
             testPending = false;
             try {
                 // TODO come up with an insane itemstack to deserialize and reserialize as a test.
                 ItemStack itemStack = new ItemStack(Material.DIRT);
-                ItemMeta meta = itemStack.getItemMeta();
-                meta.setDisplayName("DIRTY");
                 deserializeItem(serializeItem(itemStack));
             } catch (Exception e) {
                 failure = true;
@@ -190,6 +212,9 @@ public class CardboardBox {
         }
         if (item == null || item.getType() == Material.AIR) {
             return new byte[]{0x0};
+        }
+        if (modernPaper) {
+            return item.serializeAsBytes();
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
@@ -229,7 +254,9 @@ public class CardboardBox {
         if (data == null || data.length == 0 || (data.length == 1 && data[0] == 0x0)) {
             return new ItemStack(Material.AIR);
         }
-
+        if (modernPaper) {
+            return ItemStack.deserializeBytes(data);
+        }
         try {
             Object compound = nbtCompressedStreamToolsRead.invoke(null, new ByteArrayInputStream(data));
 
