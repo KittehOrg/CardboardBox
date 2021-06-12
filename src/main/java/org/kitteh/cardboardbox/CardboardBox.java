@@ -20,7 +20,6 @@ package org.kitteh.cardboardbox;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,8 +32,6 @@ import java.util.Base64;
 
 @SuppressWarnings("UnqualifiedStaticUsage")
 public class CardboardBox {
-    private static final String NMS = "net.minecraft.server.";
-    private static final String OBC = "org.bukkit.craftbukkit.";
     private static final int OLD_DATA_VERSION = 1343;
 
     private static Method itemStackFromCompound;
@@ -75,21 +72,42 @@ public class CardboardBox {
             ItemStack.class.getDeclaredMethod("deserializeBytes", byte[].class);
             ItemStack.class.getDeclaredMethod("serializeAsBytes");
             modernPaper = true;
+            failure = false;
             return;
         } catch (Exception ignored) {
         }
         try {
             String[] packageSplit = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
             String packageVersion = packageSplit[packageSplit.length - 1] + '.';
-            String nms = NMS + packageVersion;
-            String obc = OBC + packageVersion;
+            int ver = Integer.parseInt(packageVersion.split("_")[1]);
+
+            String obc = "org.bukkit.craftbukkit." + packageVersion;
+            String nmsItemStack, nmsNBTCompressedStreamTools, nmsNBTTagCompound, nmsDynamicOpsNBT, nmsDataConverterTypes, nmsDataConverterRegistry;
+
+            if (ver < 17) {
+                String nms = "net.minecraft.server." + packageVersion;
+                nmsItemStack = nms + "ItemStack";
+                nmsNBTTagCompound = nms + "NBTTagCompound";
+                nmsNBTCompressedStreamTools = nms + "NBTCompressedStreamTools";
+                nmsDynamicOpsNBT = nms + "DynamicOpsNBT";
+                nmsDataConverterTypes = nms + "DataConverterTypes";
+                nmsDataConverterRegistry = nms + "DataConverterRegistry";
+            } else {
+                nmsItemStack = "net.minecraft.world.item.ItemStack";
+                nmsNBTTagCompound = "net.minecraft.nbt.NBTTagCompound";
+                nmsNBTCompressedStreamTools = "net.minecraft.nbt.NBTCompressedStreamTools";
+                nmsDynamicOpsNBT = "net.minecraft.nbt.DynamicOpsNBT";
+                nmsDataConverterTypes = "net.minecraft.util.datafix.fixes.DataConverterTypes";
+                nmsDataConverterRegistry = "net.minecraft.util.datafix.DataConverterRegistry";
+            }
+
 
             // Time to load ALL the things!
 
             // NMS
-            Class<?> itemStack = Class.forName(nms + "ItemStack");
-            Class<?> nbtCompressedStreamTools = Class.forName(nms + "NBTCompressedStreamTools");
-            Class<?> nbtTagCompound = Class.forName(nms + "NBTTagCompound");
+            Class<?> itemStack = Class.forName(nmsItemStack);
+            Class<?> nbtCompressedStreamTools = Class.forName(nmsNBTCompressedStreamTools);
+            Class<?> nbtTagCompound = Class.forName(nmsNBTTagCompound);
             nbtTagCompoundConstructor = nbtTagCompound.getConstructor();
             try {
                 itemStackFromCompound = itemStack.getMethod("fromCompound", nbtTagCompound);
@@ -131,7 +149,7 @@ public class CardboardBox {
                     }
                 }
 
-                Class<?> dataConverterRegistry = Class.forName(nms + "DataConverterRegistry");
+                Class<?> dataConverterRegistry = Class.forName(nmsDataConverterRegistry);
                 for (Field field : dataConverterRegistry.getDeclaredFields()) {
                     if (dataFixer.isAssignableFrom(field.getType())) {
                         field.setAccessible(true);
@@ -142,8 +160,8 @@ public class CardboardBox {
                 if (dataConverterRegistryDataFixer == null) {
                     throw new IllegalStateException("No sign of data fixer");
                 }
-                dataConverterTypesItemStack = Class.forName(nms + "DataConverterTypes").getField("ITEM_STACK").get(null);
-                dynamicOpsNBT = Class.forName(nms + "DynamicOpsNBT").getField("a").get(null);
+                dataConverterTypesItemStack = Class.forName(nmsDataConverterTypes).getField("ITEM_STACK").get(null);
+                dynamicOpsNBT = Class.forName(nmsDynamicOpsNBT).getField("a").get(null);
                 Class<?> dynamicClass = dataFixerUpdate.getParameterTypes()[1];
                 for (Constructor<?> constructor : dynamicClass.getConstructors()) {
                     if (constructor.getParameterCount() == 2) {
