@@ -1,6 +1,6 @@
 /*
  * Cardboard Box
- * Copyright (C) 2020 Matt Baxter
+ * Copyright (C) 2020-2021 Matt Baxter
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 package org.kitteh.cardboardbox;
 
+import com.mojang.datafixers.DSL;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -160,7 +161,11 @@ public class CardboardBox {
                 if (dataConverterRegistryDataFixer == null) {
                     throw new IllegalStateException("No sign of data fixer");
                 }
-                dataConverterTypesItemStack = Class.forName(nmsDataConverterTypes).getField("ITEM_STACK").get(null);
+                if (ver < 17) {
+                    dataConverterTypesItemStack = Class.forName(nmsDataConverterTypes).getField("ITEM_STACK").get(null);
+                } else {
+                    dataConverterTypesItemStack = (DSL.TypeReference) () -> "item_stack";
+                }
                 dynamicOpsNBT = Class.forName(nmsDynamicOpsNBT).getField("a").get(null);
                 Class<?> dynamicClass = dataFixerUpdate.getParameterTypes()[1];
                 for (Constructor<?> constructor : dynamicClass.getConstructors()) {
