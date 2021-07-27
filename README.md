@@ -31,6 +31,6 @@ Using
 <dependency>
     <groupId>org.kitteh</groupId>
     <artifactId>cardboardbox</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
