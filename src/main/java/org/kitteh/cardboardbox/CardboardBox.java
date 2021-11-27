@@ -123,11 +123,11 @@ public class CardboardBox {
                     }
                 }
             }
-            itemStackSave = itemStack.getMethod("save", nbtTagCompound);
+            itemStackSave = itemStack.getMethod(ver >= 18 ? "b" : "save", nbtTagCompound);
             nbtCompressedStreamToolsRead = nbtCompressedStreamTools.getMethod("a", InputStream.class);
             nbtCompressedStreamToolsWrite = nbtCompressedStreamTools.getMethod("a", nbtTagCompound, OutputStream.class);
-            nbtTagCompoundGetInt = nbtTagCompound.getMethod("getInt", String.class);
-            nbtTagCompoundSetInt = nbtTagCompound.getMethod("setInt", String.class, int.class);
+            nbtTagCompoundGetInt = nbtTagCompound.getMethod(ver >= 18 ? "h" : "getInt", String.class);
+            nbtTagCompoundSetInt = nbtTagCompound.getMethod(ver >= 18 ? "a" : "setInt", String.class, int.class);
 
             // OBC
             craftItemStack = Class.forName(obc + "inventory.CraftItemStack");
