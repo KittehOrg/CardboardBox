@@ -30,6 +30,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("UnqualifiedStaticUsage")
 public class CardboardBox {
@@ -42,6 +44,7 @@ public class CardboardBox {
     private static Method nbtTagCompoundGetInt;
     private static Method nbtTagCompoundSetInt;
     private static Method dataFixerUpdate;
+    private static Method nbtAccounterUnlimitedHeap;
     private static Constructor<?> dynamic;
     private static Constructor<?> nbtTagCompoundConstructor;
     private static Constructor<?> itemStackConstructor;
@@ -78,14 +81,23 @@ public class CardboardBox {
         } catch (Exception ignored) {
         }
         try {
+            Pattern versionPattern = Pattern.compile("1\\.(\\d{1,2})(?:\\.(\\d{1,2}))?");
+            Matcher versionMatcher = versionPattern.matcher(Bukkit.getVersion());
+            if (!versionMatcher.find()) {
+                throw new RuntimeException("Could not parse version");
+            }
+            int minor = Integer.parseInt(versionMatcher.group(1));
+            String patchS = versionMatcher.group(2);
+            int patch = (patchS == null || patchS.isEmpty()) ? 0 : Integer.parseInt(patchS);
+            int ver = (minor * 100) + patch;
             String[] packageSplit = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
             String packageVersion = packageSplit[packageSplit.length - 1] + '.';
-            int ver = Integer.parseInt(packageVersion.split("_")[1]);
 
             String obc = "org.bukkit.craftbukkit." + packageVersion;
             String nmsItemStack, nmsNBTCompressedStreamTools, nmsNBTTagCompound, nmsDynamicOpsNBT, nmsDataConverterTypes, nmsDataConverterRegistry;
+            String nmsNBTReadLimiter = "net.minecraft.nbt.NBTReadLimiter";
 
-            if (ver < 17) {
+            if (ver < 1700) {
                 String nms = "net.minecraft.server." + packageVersion;
                 nmsItemStack = nms + "ItemStack";
                 nmsNBTTagCompound = nms + "NBTTagCompound";
@@ -123,11 +135,17 @@ public class CardboardBox {
                     }
                 }
             }
-            itemStackSave = itemStack.getMethod(ver >= 18 ? "b" : "save", nbtTagCompound);
-            nbtCompressedStreamToolsRead = nbtCompressedStreamTools.getMethod("a", InputStream.class);
+            itemStackSave = itemStack.getMethod(ver >= 1800 ? "b" : "save", nbtTagCompound);
+            if (ver < 2004) {
+                nbtCompressedStreamToolsRead = nbtCompressedStreamTools.getMethod("a", InputStream.class);
+            } else {
+                Class<?> nbtAccounter = Class.forName(nmsNBTReadLimiter);
+                nbtCompressedStreamToolsRead = nbtCompressedStreamTools.getMethod("a", InputStream.class, nbtAccounter);
+                nbtAccounterUnlimitedHeap = nbtAccounter.getMethod("a");
+            }
             nbtCompressedStreamToolsWrite = nbtCompressedStreamTools.getMethod("a", nbtTagCompound, OutputStream.class);
-            nbtTagCompoundGetInt = nbtTagCompound.getMethod(ver >= 18 ? "h" : "getInt", String.class);
-            nbtTagCompoundSetInt = nbtTagCompound.getMethod(ver >= 18 ? "a" : "setInt", String.class, int.class);
+            nbtTagCompoundGetInt = nbtTagCompound.getMethod(ver >= 1800 ? "h" : "getInt", String.class);
+            nbtTagCompoundSetInt = nbtTagCompound.getMethod(ver >= 1800 ? "a" : "setInt", String.class, int.class);
 
             // OBC
             craftItemStack = Class.forName(obc + "inventory.CraftItemStack");
@@ -161,7 +179,7 @@ public class CardboardBox {
                 if (dataConverterRegistryDataFixer == null) {
                     throw new IllegalStateException("No sign of data fixer");
                 }
-                if (ver < 17) {
+                if (ver < 1700) {
                     dataConverterTypesItemStack = Class.forName(nmsDataConverterTypes).getField("ITEM_STACK").get(null);
                 } else {
                     dataConverterTypesItemStack = (DSL.TypeReference) () -> "item_stack";
@@ -281,7 +299,12 @@ public class CardboardBox {
             return ItemStack.deserializeBytes(data);
         }
         try {
-            Object compound = nbtCompressedStreamToolsRead.invoke(null, new ByteArrayInputStream(data));
+            Object compound;
+            if (nbtAccounterUnlimitedHeap == null) {
+                compound = nbtCompressedStreamToolsRead.invoke(null, new ByteArrayInputStream(data));
+            } else {
+                compound = nbtCompressedStreamToolsRead.invoke(null, new ByteArrayInputStream(data), nbtAccounterUnlimitedHeap.invoke(null));
+            }
 
             if (hasDataVersion) {
                 int version = (int) nbtTagCompoundGetInt.invoke(compound, "DataVersion");

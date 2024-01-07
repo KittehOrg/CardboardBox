@@ -6,7 +6,7 @@
 
     <groupId>org.kitteh</groupId>
     <artifactId>cardboardbox</artifactId>
-    <version>0.2.2</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>Cardboard Box</name>
