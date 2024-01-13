@@ -22,8 +22,8 @@ Using
 
 ```xml
 <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
+    <id>dependency.download</id>
+    <url>https://dependency.download/repository/public/</url>
 </repository>
 ```
 
@@ -31,6 +31,6 @@ Using
 <dependency>
     <groupId>org.kitteh</groupId>
     <artifactId>cardboardbox</artifactId>
-    <version>0.2.2</version>
+    <version>1.0.0</version>
 </dependency>
 ```

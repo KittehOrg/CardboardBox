@@ -1,6 +1,6 @@
 /*
  * Cardboard Box
- * Copyright (C) 2020-2021 Matt Baxter
+ * Copyright (C) 2020-2024 Matt Baxter
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Cardboard Box!
+ */
 @SuppressWarnings("UnqualifiedStaticUsage")
 public class CardboardBox {
     private static final int OLD_DATA_VERSION = 1343;
