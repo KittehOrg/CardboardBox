@@ -31,7 +31,7 @@ maven {
 ```xml
 <repository>
     <id>dependency.download</id>
-    <url>https://dependency.download/repository/public/</url>
+    <url>https://dependency.download/releases</url>
 </repository>
 ```
 
