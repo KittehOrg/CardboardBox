@@ -3,6 +3,17 @@ Cardboard Box
 
 A simple library for storing and retrieving ItemStacks in Bukkit-related environments.
 
+Version support
+------
+
+Currently, Cardboard Box supports 1.7 through 1.21.1.
+Will it need an update for 1.21.2 (if it happens)? Maybe.
+Will it need an update for 1.22? Definitely.
+
+Support
+------
+Via [Discord](https://discord.gg/NhxASEPk). #cardboardbox channel on MOSS.
+
 Example Code
 -------
 
