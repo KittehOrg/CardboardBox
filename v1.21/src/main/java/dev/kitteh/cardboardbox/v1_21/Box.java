@@ -46,7 +46,7 @@ public class Box implements dev.kitteh.cardboardbox.api.Box {
             throw new RuntimeException(ex);
         }
         final int dataVersion = compound.getInt("DataVersion");
-        Preconditions.checkArgument(dataVersion <= DATA_VERSION, "Newer version! Server downgrades are not supported!");
+        Preconditions.checkArgument(dataVersion <= DATA_VERSION, "Newer version (" + dataVersion + " > " + DATA_VERSION + ")! Server downgrades are not supported!");
         compound = (net.minecraft.nbt.CompoundTag) MinecraftServer.getServer().fixerUpper.update(References.ITEM_STACK, new Dynamic<>(NbtOps.INSTANCE, compound), dataVersion, dataVersion).getValue();
         return CraftItemStack.asCraftMirror(net.minecraft.world.item.ItemStack.parse(MinecraftServer.getServer().registryAccess(), compound).orElseThrow());
     }
