@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":v1.20.6"))
     implementation(project(":v1.21"))
+    implementation(project(":v1.21.3"))
 }
 
 java {
@@ -37,7 +38,7 @@ publishing {
             //artifact(tasks["shadowJar"])
             groupId = "dev.kitteh"
             artifactId = "cardboardbox"
-            version = "2.0.0"
+            version = "2.0.1"
             pom {
                 name = "CardboardBox"
                 description = "A Bukkit-related data storage handler"
