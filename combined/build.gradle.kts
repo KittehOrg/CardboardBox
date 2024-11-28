@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("com.gradleup.shadow") version "8.3.5"
     id("maven-publish")
 }
 
@@ -35,10 +35,9 @@ publishing {
     publications {
         create<MavenPublication>("cardboardbox") {
             artifact(tasks.shadowJar)
-            //artifact(tasks["shadowJar"])
             groupId = "dev.kitteh"
             artifactId = "cardboardbox"
-            version = "2.0.1"
+            version = "2.0.2"
             pom {
                 name = "CardboardBox"
                 description = "A Bukkit-related data storage handler"

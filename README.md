@@ -50,12 +50,12 @@ maven {
 
 
 ```kotlin
-implementation("dev.kitteh:cardboardbox:2.0.0")
+implementation("dev.kitteh:cardboardbox:2.0.2")
 ```
 ```xml
 <dependency>
     <groupId>dev.kitteh</groupId>
     <artifactId>cardboardbox</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
 </dependency>
 ```
