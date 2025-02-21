@@ -2,12 +2,12 @@ package dev.kitteh.cardboardbox.v1_21_4;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Dynamic;
+import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.datafix.fixes.References;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class Box implements dev.kitteh.cardboardbox.api.Box {
         return itemStack.equals(deserializeItem(serializeItem(itemStack)));
     }
 
-    private static final int DATA_VERSION = CraftMagicNumbers.INSTANCE.getDataVersion();
+    private static final int DATA_VERSION = SharedConstants.getCurrentVersion().getDataVersion().getVersion();
 
     @Override
     public byte[] serializeItem(ItemStack item) {
