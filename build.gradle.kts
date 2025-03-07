@@ -35,7 +35,7 @@ publishing {
             artifact(tasks.shadowJar)
             groupId = "dev.kitteh"
             artifactId = "cardboardbox"
-            version = "3.0.1"
+            version = "3.0.2"
             pom {
                 name = "CardboardBox"
                 description = "A Bukkit-related data storage handler"
