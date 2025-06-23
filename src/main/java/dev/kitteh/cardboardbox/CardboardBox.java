@@ -38,7 +38,9 @@ public class CardboardBox {
                 JavaPlugin.getProvidingPlugin(CardboardBox.class).getLogger().warning("CardboardBox could not identify Minecraft version.");
                 ready = false;
             }
-            if (mcVersion >= 2105) {
+            if (mcVersion >= 2106) {
+                chosenBox = getBox("v1_21_6");
+            } else if (mcVersion == 2105) {
                 chosenBox = getBox("v1_21_5");
             } else if (mcVersion == 2104) {
                 chosenBox = getBox("v1_21_4");

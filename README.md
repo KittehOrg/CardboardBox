@@ -6,10 +6,10 @@ A simple library for storing and retrieving ItemStacks in Bukkit-related environ
 Version support
 ------
 
-Currently, Cardboard Box supports 1.7 through 1.21.5.  
+Currently, Cardboard Box supports 1.7 through 1.21.6.  
 Requires Java 21.  
 
-Will it need an update for 1.21.6? Maybe.  
+Will it need an update for 1.21.7? Maybe.  
 Will it need an update for 1.22? Definitely.
 
 Support
@@ -52,12 +52,12 @@ maven {
 
 
 ```kotlin
-implementation("dev.kitteh:cardboardbox:3.0.3")
+implementation("dev.kitteh:cardboardbox:3.0.4")
 ```
 ```xml
 <dependency>
     <groupId>dev.kitteh</groupId>
     <artifactId>cardboardbox</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
