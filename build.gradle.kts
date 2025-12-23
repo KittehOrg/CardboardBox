@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":v1.21.5", configuration = "reobf"))
     implementation(project(":v1.21.6", configuration = "reobf"))
     implementation(project(":v1.21.9", configuration = "reobf"))
+    implementation(project(":v1.21.11", configuration = "reobf"))
 }
 
 tasks.assemble {
@@ -38,7 +39,7 @@ publishing {
             artifact(tasks.shadowJar)
             groupId = "dev.kitteh"
             artifactId = "cardboardbox"
-            version = "3.0.5"
+            version = "3.0.6"
             pom {
                 name = "CardboardBox"
                 description = "A Bukkit-related data storage handler"
