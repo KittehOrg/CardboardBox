@@ -1,6 +1,6 @@
 plugins {
     `meow-conventions`
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19" apply false
+    id("io.papermc.paperweight.userdev") version "2.0.0-SNAPSHOT" apply false
     id("com.gradleup.shadow") version "8.3.5"
     id("maven-publish")
 }
@@ -19,6 +19,11 @@ dependencies {
     implementation(project(":v1.21.6", configuration = "reobf"))
     implementation(project(":v1.21.9", configuration = "reobf"))
     implementation(project(":v1.21.11", configuration = "reobf"))
+    implementation(project(":v26.1"))
+}
+
+java {
+    disableAutoTargetJvm()
 }
 
 tasks.assemble {
@@ -39,7 +44,7 @@ publishing {
             artifact(tasks.shadowJar)
             groupId = "dev.kitteh"
             artifactId = "cardboardbox"
-            version = "3.0.6"
+            version = "3.1.0"
             pom {
                 name = "CardboardBox"
                 description = "A Bukkit-related data storage handler"

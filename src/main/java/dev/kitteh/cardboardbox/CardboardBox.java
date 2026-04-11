@@ -38,7 +38,9 @@ public class CardboardBox {
                 JavaPlugin.getProvidingPlugin(CardboardBox.class).getLogger().warning("CardboardBox could not identify Minecraft version.");
                 ready = false;
             }
-            if (mcVersion >= 2111) {
+            if (mcVersion >= 260100) {
+                chosenBox = getBox("v26_1");
+            } else if (mcVersion >= 2111) {
                 chosenBox = getBox("v1_21_11");
             } else if (mcVersion >= 2109) {
                 chosenBox = getBox("v1_21_9");
@@ -77,16 +79,21 @@ public class CardboardBox {
     }
 
     private static int getMcVersion() {
-        Pattern versionPattern = Pattern.compile("1\\.(\\d{1,2})(?:\\.(\\d{1,2}))?");
+        Pattern versionPattern = Pattern.compile("(\\d{1,2})\\.(\\d{1,2})(?:\\.(\\d{1,2}))?");
         Matcher versionMatcher = versionPattern.matcher(Bukkit.getVersion());
 
         int mcVersion = 0;
         if (versionMatcher.find()) {
             try {
-                int minor = Integer.parseInt(versionMatcher.group(1));
-                String patchS = versionMatcher.group(2);
+                int major = Integer.parseInt(versionMatcher.group(1));
+                int minor = Integer.parseInt(versionMatcher.group(2));
+                String patchS = versionMatcher.group(3);
                 int patch = (patchS == null || patchS.isEmpty()) ? 0 : Integer.parseInt(patchS);
-                mcVersion = (minor * 100) + patch;
+                if (major == 1) {
+                    mcVersion = (minor * 100) + patch;
+                } else {
+                    mcVersion = (major * 10000) + (minor * 100) + patch;
+                }
             } catch (NumberFormatException ignored) {
             }
         }

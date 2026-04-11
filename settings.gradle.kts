@@ -8,3 +8,11 @@ include("v1.21.5")
 include("v1.21.6")
 include("v1.21.9")
 include("v1.21.11")
+include("v26.1")
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://repo.papermc.io/repository/maven-public/")
+    }
+}
